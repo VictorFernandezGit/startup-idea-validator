@@ -1,0 +1,81 @@
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+
+.app-container {
+  position: relative;
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  z-index: 1;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0;
+}
+
+.subtext {
+  color: #94a3b8;
+  margin-top: 0;
+}
+
+textarea {
+  width: 100%;
+  height: 160px;
+  border-radius: 10px;
+  padding: 1rem;
+  background-color: #1e293b;
+  color: #e2e8f0;
+  border: none;
+  resize: vertical;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #38bdf8;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  color: #0f172a;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+
+.output-card {
+  background-color: #1e293b;
+  border-radius: 10px;
+  padding: 1.25rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.hidden {
+  display: none;
+}
+
+#particles-js {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.2;
+}
+
