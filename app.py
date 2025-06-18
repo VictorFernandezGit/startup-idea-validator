@@ -19,6 +19,14 @@ def home():
 def validator():
     return render_template('validator.html')
 
+@app.route('/subscribe', methods=['POST'])
+def subscribe():
+    email = request.form['email']
+    # Save to database, send to email list, etc.
+    print(f"New subscriber: {email}")
+    return redirect(url_for('index'))  # or render a thank you
+
+
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
