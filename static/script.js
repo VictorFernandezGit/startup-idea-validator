@@ -1,29 +1,36 @@
-const btn = document.getElementById("analyze-btn");
-const resultDiv = document.getElementById("result");
-const loading = document.getElementById("loading");
+let selectedMode = "general"; // default
 
-btn.addEventListener("click", () => {
+document.querySelectorAll(".mode-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    selectedMode = btn.dataset.mode;
+
+    document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  });
+});
+
+document.getElementById("analyze-btn").addEventListener("click", () => {
   const idea = document.getElementById("idea").value;
+  const resultDiv = document.getElementById("result");
+  const loading = document.getElementById("loading");
+
   resultDiv.classList.add("hidden");
   loading.classList.remove("hidden");
 
   fetch("/analyze", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idea }),
+    body: JSON.stringify({ idea, mode: selectedMode }),
   })
     .then(res => res.json())
     .then(data => {
       loading.classList.add("hidden");
       resultDiv.classList.remove("hidden");
 
-      if (data.result) {
-        resultDiv.innerText = data.result;
-      } else {
-        resultDiv.innerText = "⚠️ Error: " + (data.error || "Unknown error.");
-      }
+      resultDiv.innerText = data.result || "Error: " + data.error;
     });
 });
+
 particlesJS("particles-js", {
   particles: {
     number: { value: 60 },

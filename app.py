@@ -13,27 +13,30 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable static file caching
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('homepage.html')
+
+@app.route('/validator')
+def validator():
+    return render_template('validator.html')
+
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    idea = request.form.get("idea", "")
+    data = request.json
+    idea = data.get("idea", "")
+    mode = data.get("mode", "general")
 
-    prompt = f"""
+    base_prompt = {
+        "general": f"""Act as a startup analyst. Analyze this startup idea:\n\n"{idea}"\n\nGive back a structured analysis including summary, audience, value prop, pros/cons, competitor review, and SWOT.""",
+        "sharktank": f"""Act like a Shark Tank investor. Review this pitch idea:\n\n"{idea}"\n\nTell me how viable it is, how much you'd invest, what's wrong with it, and how it can scale fast. Include risks and profitability potential.""",
+        "lean": f"""Act as a Lean Startup coach. Analyze this idea:\n\n"{idea}"\n\nGive MVP advice, customer validation strategy, and what to test first. Include assumptions and risks.""",
+        "vc": f"""Act like a venture capitalist. Analyze this idea:\n\n"{idea}"\n\nEvaluate TAM/SAM/SOM, GTM strategy, defensibility, CAC/LTV potential, and team strength.""",
+        "tech": f"""Act like a technical co-founder. Analyze this idea:\n\n"{idea}"\n\nEstimate build time, tech stack, risks, and whether it's technically feasible in 3 months. Suggest architecture too."""
+    }
 
-    Act as a startup analyst. Analyze this startup idea:
+    
+    prompt = base_prompt.get(mode, base_prompt["general"])
 
-"{idea}"
-
-Give back:
-1. One-sentence summary
-2. Target audience
-3. Value proposition
-4. Pros
-5. Cons
-6. Competitor analysis
-7. SWOT analysis
-"""
     
     try:
         response = openai.ChatCompletion.create(

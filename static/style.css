@@ -79,3 +79,266 @@ button:hover {
   opacity: 0.2;
 }
 
+.mode-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.mode-btn {
+  background: #1e293b;
+  border: 1px solid #38bdf8;
+  color: #e2e8f0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.mode-btn:hover {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.mode-btn.active {
+  background: #38bdf8;
+  color: #0f172a;
+  font-weight: bold;
+}
+
+/* homepage */
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: #0f172a; /* dark slate background */
+  border-bottom: 1px solid #1f2937; /* subtle divider */
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+.nav-links a {
+  margin-left: 1.5rem;
+  color: #cbd5e1; /* slate-200 */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #38bdf8;
+}
+
+.try-btn {
+  background-color: #38bdf8;
+  color: #0f172a;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-left: 1.5rem;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.try-btn:hover {
+  background-color: #22d3ee;
+}
+
+.cta-button:hover {
+  background-color: #22d3ee;
+}
+
+/* Hero Section */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4rem 2rem;
+
+}
+
+.hero-text {
+  flex: 1 1 50%;
+}
+
+.hero-text h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero-text p {
+  color: #94a3b8;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.cta-button {
+  background-color: #38bdf8;
+  color: #0f172a;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.cta-button:hover {
+  background-color: #22d3ee;
+}
+
+
+/* Hero Image */
+.hero-image {
+  flex: 1 1 40%;
+  text-align: center;
+}
+
+.hero-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* Hero Diagonal */
+.hero-diagonal {
+  display: flex;
+  height: auto;
+  min-height: 450px;
+  max-height: 650px;
+  padding: 3rem 0;
+  overflow: hidden;
+  background: #0f172a;
+  position: relative;
+}
+
+
+.hero-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* ensures text and button align left */
+  gap: 1.25rem;
+  padding: 3rem;
+}
+
+.hero-right {
+  flex: 1;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.liquid-anim {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, #38bdf8, #1e40af, #0f172a);
+  background-size: 300% 300%;
+  animation: moveBG 10s ease infinite;
+  filter: blur(40px) contrast(130%) brightness(120%);
+}
+
+@keyframes moveBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+/* Features Section */
+.features {
+  background-color: #12264a00; /* darker shade than main background */
+  padding: 4rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+.feature-card {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card h3 {
+  color: #38bdf8;
+  margin-bottom: 0.75rem;
+}
+
+.feature-card p {
+  color: #94a3b8;
+}
+
+
+/* Footer */
+footer {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Testimonials */
+.testimonials {
+  background-color: #0f172a;
+  padding: 4rem 2rem;
+  text-align: center;
+  border-radius: 12px;
+  margin-top: 3rem;
+}
+
+.testimonials h2 {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+}
+
+.testimonial-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.testimonial-card {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-style: italic;
+}
+
+.testimonial-card span {
+  display: block;
+  margin-top: 1rem;
+  color: #94a3b8;
+  font-style: normal;
+  font-weight: bold;
+}
