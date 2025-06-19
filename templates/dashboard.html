@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=6">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Block content here-->
+<nav class="bg-gray-800 p-4 flex justify-between items-center shadow z-10 relative">
+  <div class="text-white text-lg font-bold">Startup Validator 🚀</div>
+  <span class="text-gray-300">Credits: {{ user.credits }}</span>
+
+  <div class="space-x-4">
+    <a href="#" class="text-gray-300 hover:text-white">Dashboard</a>
+    <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-white">Logout</a>
+  </div>
+</nav>
+
+<div class="app-container">
+  <h1 class="validator-heading"> Startup Idea <span  class="gradient-swish"> Validator </span></h1>
+  <p class="subtext">Enter your idea and get an instant deep-dive analysis.</p>
+
+  <div class="mode-buttons">
+    <button data-mode="general" class="mode-btn active">🧠 General</button>
+    <button data-mode="sharktank" class="mode-btn">🦈 Shark Tank</button>
+    <button data-mode="lean" class="mode-btn">👨‍🏫 Lean Coach</button>
+    <button data-mode="vc" class="mode-btn">💰 VC Review</button>
+    <button data-mode="tech" class="mode-btn">🤓 Tech Co-founder</button>
+  </div>
+  
+  <textarea id="idea" placeholder="Type your startup idea here..."></textarea>
+  <button id="analyze-btn">Analyze Idea</button>
+
+  <div id="loading" class="hidden">Thinking... 💭</div>
+  <div id="result" class="output-card hidden"></div>
+</div>
+
+<div id="particles-js"></div>
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}

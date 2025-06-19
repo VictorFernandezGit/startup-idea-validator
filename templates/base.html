@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=6">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}Your SaaS{% endblock %}</title>
+    {% block head %}{% endblock %}
+  </head>
+  
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="p-4 text-center">
+        {% for category, message in messages %}
+          <div class="p-2 my-2 rounded text-sm text-white
+                      {% if category == 'success' %}bg-green-600
+                      {% elif category == 'danger' %}bg-red-600
+                      {% elif category == 'warning' %}bg-yellow-500 text-black
+                      {% else %}bg-gray-700{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</body>
+</html>

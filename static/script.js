@@ -17,19 +17,29 @@ document.getElementById("analyze-btn").addEventListener("click", () => {
   resultDiv.classList.add("hidden");
   loading.classList.remove("hidden");
 
-  fetch("/analyze", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idea, mode: selectedMode }),
+  fetch('/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idea, mode })
   })
-    .then(res => res.json())
-    .then(data => {
-      loading.classList.add("hidden");
-      resultDiv.classList.remove("hidden");
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) {
+      alert(data.error === 'out_of_credits'
+        ? "You're out of credits!"
+        : "You must be logged in.");
+      return;
+    }
+  
+    resultBox.innerHTML = data.result;
+  })
 
-      resultDiv.innerText = data.result || "Error: " + data.error;
-    });
+  .catch(err => {
+    console.error("Error:", err);
+    resultBox.innerHTML = "Something went wrong.";
+  });
 });
+
 
 particlesJS("particles-js", {
   particles: {

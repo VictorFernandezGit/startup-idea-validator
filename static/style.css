@@ -2,7 +2,7 @@ body {
   margin: 0;
   background: linear-gradient(135deg, #030406, #294573);
   color: #e2e8f0;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif !important;
   overflow-x: hidden;
 }
 
@@ -19,9 +19,11 @@ body {
 }
 
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0;
+  font-size: 2.5rem !important ;
+  margin-bottom: 0 !important;
 }
+
+
 
 .subtext {
   color: #94a3b8;
@@ -55,6 +57,19 @@ button {
 button:hover {
   transform: scale(1.03);
 }
+
+
+
+#analyze-btn {
+  background-color: #0ea5e9;
+  color: white;
+  padding: 12px 24px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
 
 .output-card {
   background-color: #1e293b;
@@ -541,4 +556,16 @@ footer {
 
 .optin-form button:hover {
   background-color: #059669; /* Slightly darker green */
+}
+
+
+/* Dashboard */
+
+/* === Validator Page Overrides === */
+.validator-heading {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: left;
+  color: #ffffff;
+  margin-bottom: 1rem;
 }
