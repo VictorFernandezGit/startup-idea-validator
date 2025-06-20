@@ -7,7 +7,7 @@
 
 {% block content %}
 
-<!-- Block content here-->
+<!-- Full-width navbar at the top -->
 <nav class="bg-gray-800 p-4 flex justify-between items-center shadow z-10 relative">
   <div class="text-white text-lg font-bold">Startup Validator 🚀</div>
   <span class="text-gray-300">Credits: {{ user.credits }}</span>
@@ -18,29 +18,50 @@
   </div>
 </nav>
 
-<div class="app-container">
-  <h1 class="validator-heading"> Startup Idea <span  class="gradient-swish"> Validator </span></h1>
-  <p class="subtext">Enter your idea and get an instant deep-dive analysis.</p>
-
-  <div class="mode-buttons">
-    <button data-mode="general" class="mode-btn active">🧠 General</button>
-    <button data-mode="sharktank" class="mode-btn">🦈 Shark Tank</button>
-    <button data-mode="lean" class="mode-btn">👨‍🏫 Lean Coach</button>
-    <button data-mode="vc" class="mode-btn">💰 VC Review</button>
-    <button data-mode="tech" class="mode-btn">🤓 Tech Co-founder</button>
+<!-- Flex container for sidebar and main content -->
+<div class="dashboard-flex">
+  <!-- Sidebar for saved ideas -->
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">&#60;</button>
+    <h2>Saved Ideas</h2>
+    <ul id="ideas-list"></ul>
   </div>
-  
-  <textarea id="idea" placeholder="Type your startup idea here..."></textarea>
-  <button id="analyze-btn">Analyze Idea</button>
 
-  <div id="loading" class="hidden">Thinking... 💭</div>
-  <div id="result" class="output-card hidden"></div>
+  <!-- Main content -->
+  <div class="dashboard-app-container">
+    <h1 class="validator-heading"> Startup Idea <span  class="gradient-swish"> Validator </span></h1>
+    <p class="subtext">Enter your idea and get an instant deep-dive analysis.</p>
+
+    <div class="mode-buttons">
+      <button data-mode="general" class="mode-btn active">🧠 General</button>
+      <button data-mode="sharktank" class="mode-btn">🦈 Shark Tank</button>
+      <button data-mode="lean" class="mode-btn">👨‍🏫 Lean Coach</button>
+      <button data-mode="vc" class="mode-btn">💰 VC Review</button>
+      <button data-mode="tech" class="mode-btn">🤓 Tech Co-founder</button>
+    </div>
+    
+    <textarea id="idea" class="custom-textarea" placeholder="Type your startup idea here..."></textarea>
+    <button id="analyze-btn">Analyze Idea</button>
+
+    <div id="loading" class="hidden">Thinking... 💭</div>
+    <div id="result" class="output-card hidden"></div>
+  </div>
 </div>
 
 <div id="particles-js"></div>
 
-
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+  // Sidebar collapse/expand logic
+  const sidebar = document.getElementById('sidebar');
+  const toggleBtn = document.getElementById('sidebar-toggle');
+  let collapsed = false;
+  toggleBtn.addEventListener('click', function() {
+    collapsed = !collapsed;
+    sidebar.classList.toggle('sidebar-collapsed', collapsed);
+    toggleBtn.innerHTML = collapsed ? '&gt;' : '&lt;';
+  });
+</script>
 {% endblock %}
