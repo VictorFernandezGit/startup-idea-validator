@@ -11,10 +11,11 @@
 <body>
   <header class="navbar">
     <div class="logo">Startup Validator</div>
-    <nav class="nav-links">
+    <button class="hamburger" id="hamburger" aria-label="Open navigation">&#9776;</button>
+    <nav class="nav-links" id="navLinks">
       <a href="/login">Login</a>
       <a href="/dashboard">Dashboard</a>
-      <a href="/validator" class="try-btn">Try It Now</a>
+      <a href="/register" class="try-btn">Try It Now</a>
     </nav>
   </header>
 
@@ -22,7 +23,7 @@
     <div class="hero-content">
       <h1>Validate Your Startup Ideas <br /><span class="gradient-swish">Instantly</span></h1>
       <p>Don't waste months on the wrong idea — get AI-powered insight in seconds.</p>
-      <a href="/validator" class="cta-button">Try It Free →</a>
+      <a href="/register" class="cta-button">Try It Free →</a>
     </div>
   </section>
   
@@ -103,6 +104,13 @@
     maxDistance: 25.0,
     spacing: 15.0
   })
+
+  // Hamburger menu toggle
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', function() {
+    navLinks.classList.toggle('active');
+  });
 </script>
 
 </body>

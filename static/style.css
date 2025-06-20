@@ -19,7 +19,7 @@ body {
 }
 
 h1 {
-  font-size: 2.5rem !important ;
+  font-size: 3.5rem !important ;
   margin-bottom: 0 !important;
 }
 
@@ -199,7 +199,7 @@ button:hover {
 
 .hero-text p {
   color: #94a3b8;
-  font-size: 1.2rem;
+  font-size: 1.0rem;
   margin-bottom: 2rem;
 }
 
@@ -333,10 +333,12 @@ button:hover {
 .feature-card h3 {
   color: #38bdf8;
   margin-bottom: 0.75rem;
+  font-size: 2rem;
 }
 
 .feature-card p {
   color: #94a3b8;
+  font-size: 1.15rem;
 }
 
 .feature-card img {
@@ -447,13 +449,13 @@ footer {
 
 
 .hero-content h1 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   color: #e2e8f0;
   margin-bottom: 1rem;
 }
 
 .hero-content p {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   color: #94a3b8;
   margin-bottom: 2rem;
 }
@@ -702,6 +704,18 @@ footer {
   .app-container {
     padding: 1.2rem 1rem 2rem 1rem;
   }
+  .hero-content h1 {
+    font-size: 2.1rem;
+  }
+  .hero-content p {
+    font-size: 1.3rem;
+  }
+  .feature-card h3 {
+    font-size: 1.25rem;
+  }
+  .feature-card p {
+    font-size: 1rem;
+  }
 }
 
 .dashboard-app-container {
@@ -753,6 +767,71 @@ footer {
   to {
     opacity: 0;
     transform: translateX(100%);
+  }
+}
+
+/* --- Navbar mobile styles --- */
+@media (max-width: 700px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 1rem;
+  }
+  .logo {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+  }
+  .nav-links {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .nav-links.active {
+    display: flex;
+  }
+  .nav-links a {
+    margin: 0.5rem 0 0 0;
+    padding: 0.5rem 0;
+    width: 100%;
+    text-align: left;
+  }
+  .navbar .hamburger {
+    display: block;
+    background: none;
+    border: none;
+    color: #38bdf8;
+    font-size: 2rem;
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    z-index: 1100;
+  }
+}
+
+/* Hide hamburger on desktop */
+.hamburger {
+  display: none;
+}
+
+/* --- Optin section mobile styles --- */
+@media (max-width: 700px) {
+  .optin-section {
+    padding: 2rem 0.5rem;
+  }
+  .optin-content h2 {
+    font-size: 1.3rem;
+  }
+  .optin-content p {
+    font-size: 1rem;
+  }
+  .optin-form input[type="email"] {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+  }
+  .optin-form button {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
   }
 }
 
