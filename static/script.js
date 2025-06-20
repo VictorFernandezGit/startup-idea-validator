@@ -101,6 +101,13 @@ document.getElementById("analyze-btn").addEventListener("click", () => {
     loading.classList.add("hidden");
     resultDiv.classList.remove("hidden");
     resultDiv.innerHTML = data.result;
+    // Update credits display
+    if (typeof data.remaining_credits !== 'undefined') {
+      const creditsSpan = document.querySelector('.text-gray-300');
+      if (creditsSpan) {
+        creditsSpan.textContent = `Credits: ${data.remaining_credits}`;
+      }
+    }
     loadIdeas();
   })
 

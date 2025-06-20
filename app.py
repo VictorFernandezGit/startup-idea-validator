@@ -26,7 +26,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    credits = db.Column(db.Integer, default=10)
+    credits = db.Column(db.Integer, default=100)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -127,7 +127,7 @@ def analyze():
 
     try:
         response = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
+            model='gpt-4o',
             messages=[{'role': 'user', 'content': prompt}],
             temperature=0.7,
             max_tokens=800
