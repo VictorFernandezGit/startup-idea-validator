@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 from flask_migrate import Migrate
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Load environment variables
 load_dotenv()
@@ -16,6 +17,12 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable static file caching
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Secure session cookies for production
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# Trust proxy headers (needed for HTTPS on Render)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Database setup
 db = SQLAlchemy(app)
