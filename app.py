@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_login import login_user, UserMixin, LoginManager, login_required, current_user
 
 # Load environment variables
 load_dotenv()
@@ -29,7 +30,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # Model definition
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
@@ -43,6 +44,15 @@ class Idea(db.Model):
     content = db.Column(db.Text, nullable=False)
     output = db.Column(db.Text, nullable=True)  # Stores OpenAI output
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Home route
 @app.route('/')
@@ -61,8 +71,9 @@ def register():
         new_user = User(email=email, password=password_hash)
         db.session.add(new_user)
         db.session.commit()
-        flash('Account created successfully', 'success')
-        return redirect(url_for('login'))
+        login_user(new_user)
+        flash('Registration successful! You are now logged in.', 'success')
+        return redirect(url_for('dashboard'))
     return render_template('register.html')
 
 # Login route
@@ -72,7 +83,7 @@ def login():
         email = request.form.get('email', '').strip()
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, request.form.get('password', '')):
-            session['user_id'] = user.id
+            login_user(user)
             flash('Logged in successfully', 'success')
             return redirect(url_for('dashboard'))
         flash('Invalid email or password', 'error')
@@ -81,17 +92,15 @@ def login():
 
 # Dashboard (protected)
 @app.route('/dashboard')
+@login_required
 def dashboard():
-    if 'user_id' not in session:
-        flash('Please login first', 'error')
-        return redirect(url_for('login'))
-    user = User.query.get(session['user_id'])
-    return render_template('dashboard.html', user=user)
+    return render_template('dashboard.html', user=current_user)
 
 # Logout route
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
+    from flask_login import logout_user
+    logout_user()
     flash('Logged out successfully', 'success')
     return redirect(url_for('home'))
 
@@ -110,19 +119,16 @@ def subscribe():
 
 # Analyze endpoint
 @app.route('/analyze', methods=['POST'])
+@login_required
 def analyze():
-    if 'user_id' not in session:
-        return jsonify({'error': 'unauthorized'}), 401
-    user = User.query.get(session['user_id'])
+    user = current_user
     if user.credits <= 0:
         return jsonify({'error': 'out_of_credits'}), 403
     user.credits -= 1
     db.session.commit()
-
     data = request.get_json() or {}
     idea = data.get('idea', '')
     mode = data.get('mode', 'general')
-
     prompts = {
         'general': f"Act as a startup analyst. Analyze: '{idea}'. Provide summary, audience, value prop, pros/cons, competitor review, SWOT.",
         'sharktank': f"Act like a Shark Tank investor. Review: '{idea}'. Viability, investment amount, flaws, scaling, risks, profitability.",
@@ -131,7 +137,6 @@ def analyze():
         'tech': f"Act as a technical co-founder. Analyze: '{idea}'. Build time, tech stack, risks, 3-month feasibility, architecture."
     }
     prompt = prompts.get(mode, prompts['general'])
-
     try:
         response = openai.ChatCompletion.create(
             model='gpt-4o',
@@ -149,10 +154,9 @@ def analyze():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/save_idea', methods=['POST'])
+@login_required
 def save_idea():
-    if 'user_id' not in session:
-        return jsonify({'error': 'unauthorized'}), 401
-    user_id = session['user_id']
+    user_id = current_user.id
     data = request.get_json() or {}
     content = data.get('content', '').strip()
     output = data.get('output', None)
@@ -164,10 +168,9 @@ def save_idea():
     return jsonify({'success': True, 'idea_id': idea.id, 'created_at': idea.created_at})
 
 @app.route('/ideas', methods=['GET'])
+@login_required
 def get_ideas():
-    if 'user_id' not in session:
-        return jsonify({'error': 'unauthorized'}), 401
-    user_id = session['user_id']
+    user_id = current_user.id
     ideas = Idea.query.filter_by(user_id=user_id).order_by(Idea.created_at.desc()).all()
     ideas_data = [
         {'id': idea.id, 'content': idea.content, 'created_at': idea.created_at.isoformat()}
@@ -176,10 +179,9 @@ def get_ideas():
     return jsonify({'ideas': ideas_data})
 
 @app.route('/delete_idea/<int:idea_id>', methods=['DELETE'])
+@login_required
 def delete_idea(idea_id):
-    if 'user_id' not in session:
-        return jsonify({'error': 'unauthorized'}), 401
-    user_id = session['user_id']
+    user_id = current_user.id
     idea = Idea.query.filter_by(id=idea_id, user_id=user_id).first()
     if not idea:
         return jsonify({'error': 'not_found'}), 404

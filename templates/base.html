@@ -8,22 +8,31 @@
   </head>
   
 <body class="bg-gray-900 text-white min-h-screen flex flex-col">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="p-4 text-center">
+  <div id="toast-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
         {% for category, message in messages %}
-          <div class="p-2 my-2 rounded text-sm text-white
-                      {% if category == 'success' %}bg-green-600
-                      {% elif category == 'danger' %}bg-red-600
-                      {% elif category == 'warning' %}bg-yellow-500 text-black
-                      {% else %}bg-gray-700{% endif %}">
+          <div class="toast
+            {% if category == 'success' %}toast-success
+            {% elif category == 'danger' %}toast-danger
+            {% elif category == 'warning' %}toast-warning
+            {% else %}toast-default{% endif %}">
             {{ message }}
           </div>
         {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+      {% endif %}
+    {% endwith %}
+  </div>
 
   {% block content %}{% endblock %}
+
+  <script>
+    // Remove toast from DOM after animation
+    document.querySelectorAll('.toast').forEach(function(toast) {
+      setTimeout(function() {
+        toast.remove();
+      }, 2000); // 2 seconds
+    });
+  </script>
 </body>
 </html>
