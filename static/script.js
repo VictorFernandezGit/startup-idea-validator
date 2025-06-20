@@ -20,7 +20,8 @@ document.getElementById("analyze-btn").addEventListener("click", () => {
   fetch('/analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idea, mode })
+    //body: JSON.stringify({ idea, mode })
+    body: JSON.stringify({idea,mode:selectedMode})
   })
   .then(res => res.json())
   .then(data => {
@@ -31,12 +32,18 @@ document.getElementById("analyze-btn").addEventListener("click", () => {
       return;
     }
   
-    resultBox.innerHTML = data.result;
+    //resultBox.innerHTML = data.result;
+    loading.classList.add("hidden");
+    resultDiv.classList.remove("hidden");
+    resultDiv.innerHTML = data.result;
   })
 
   .catch(err => {
     console.error("Error:", err);
-    resultBox.innerHTML = "Something went wrong.";
+    //resultBox.innerHTML = "Something went wrong.";
+    loading.classList.add("hidden");
+    resultDiv.classList.remove("hidden");
+    resultDiv.innerHTML = "Something went wrong.";
   });
 });
 
