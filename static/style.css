@@ -705,16 +705,32 @@ footer {
     padding: 1.2rem 1rem 2rem 1rem;
   }
   .hero-content h1 {
-    font-size: 2.1rem;
+    font-size: 1.5rem;
   }
   .hero-content p {
-    font-size: 1.3rem;
+    font-size: 1rem;
   }
   .feature-card h3 {
     font-size: 1.25rem;
   }
   .feature-card p {
     font-size: 1rem;
+  }
+  .navbar {
+    position: relative;
+  }
+  .navbar .hamburger {
+    display: block;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1100;
+    margin: 0;
+    padding: 0;
+    height: 2.5rem;
+    width: 2.5rem;
+    line-height: 2.5rem;
+    text-align: center;
   }
 }
 
