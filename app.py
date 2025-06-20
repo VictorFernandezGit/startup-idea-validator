@@ -30,6 +30,13 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+class Idea(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    output = db.Column(db.Text, nullable=True)  # Stores OpenAI output
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 # Home route
 @app.route('/')
 def home():
@@ -114,7 +121,7 @@ def analyze():
         'sharktank': f"Act like a Shark Tank investor. Review: '{idea}'. Viability, investment amount, flaws, scaling, risks, profitability.",
         'lean': f"Act as a Lean Startup coach. Analyze: '{idea}'. MVP advice, validation, tests, assumptions, risks.",
         'vc': f"Act like a VC. Analyze: '{idea}'. TAM/SAM/SOM, GTM, defensibility, CAC/LTV, team strength.",
-        'tech': f"Act as a technical co-founder. Analyze: '{idea}'. Build time, tech stack, risks, 3-month feasibility, architecture."            
+        'tech': f"Act as a technical co-founder. Analyze: '{idea}'. Build time, tech stack, risks, 3-month feasibility, architecture."
     }
     prompt = prompts.get(mode, prompts['general'])
 
@@ -126,9 +133,52 @@ def analyze():
             max_tokens=800
         )
         result = response.choices[0].message.content.strip()
+        # Save the idea and output
+        idea_obj = Idea(user_id=user.id, content=idea, output=result)
+        db.session.add(idea_obj)
+        db.session.commit()
         return jsonify({'result': result, 'remaining_credits': user.credits})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/save_idea', methods=['POST'])
+def save_idea():
+    if 'user_id' not in session:
+        return jsonify({'error': 'unauthorized'}), 401
+    user_id = session['user_id']
+    data = request.get_json() or {}
+    content = data.get('content', '').strip()
+    output = data.get('output', None)
+    if not content:
+        return jsonify({'error': 'empty_content'}), 400
+    idea = Idea(user_id=user_id, content=content, output=output)
+    db.session.add(idea)
+    db.session.commit()
+    return jsonify({'success': True, 'idea_id': idea.id, 'created_at': idea.created_at})
+
+@app.route('/ideas', methods=['GET'])
+def get_ideas():
+    if 'user_id' not in session:
+        return jsonify({'error': 'unauthorized'}), 401
+    user_id = session['user_id']
+    ideas = Idea.query.filter_by(user_id=user_id).order_by(Idea.created_at.desc()).all()
+    ideas_data = [
+        {'id': idea.id, 'content': idea.content, 'created_at': idea.created_at.isoformat()}
+        for idea in ideas
+    ]
+    return jsonify({'ideas': ideas_data})
+
+@app.route('/delete_idea/<int:idea_id>', methods=['DELETE'])
+def delete_idea(idea_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'unauthorized'}), 401
+    user_id = session['user_id']
+    idea = Idea.query.filter_by(id=idea_id, user_id=user_id).first()
+    if not idea:
+        return jsonify({'error': 'not_found'}), 404
+    db.session.delete(idea)
+    db.session.commit()
+    return jsonify({'success': True})
 
 # Run server
 def create_app():

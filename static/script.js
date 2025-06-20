@@ -9,6 +9,73 @@ document.querySelectorAll(".mode-btn").forEach(btn => {
   });
 });
 
+// Fetch and display saved ideas
+function loadIdeas() {
+  fetch('/ideas')
+    .then(res => res.json())
+    .then(data => {
+      if (data.ideas) {
+        const list = document.getElementById('ideas-list');
+        if (!list) return;
+        list.innerHTML = '';
+        data.ideas.forEach(idea => {
+          const li = document.createElement('li');
+          // Container for text and delete button
+          const textSpan = document.createElement('span');
+          textSpan.textContent = idea.content.length > 40 ? idea.content.slice(0, 40) + '...' : idea.content;
+          textSpan.title = idea.content;
+          textSpan.style.cursor = 'pointer';
+          textSpan.addEventListener('click', () => {
+            document.getElementById('idea').value = idea.content;
+          });
+
+          // Delete button
+          const delBtn = document.createElement('button');
+          delBtn.textContent = '🗑️';
+          delBtn.title = 'Delete idea';
+          delBtn.style.marginLeft = '0.5rem';
+          delBtn.style.background = 'none';
+          delBtn.style.border = 'none';
+          delBtn.style.color = '#e2e8f0';
+          delBtn.style.cursor = 'pointer';
+          delBtn.style.fontSize = '1rem';
+          delBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm('Delete this idea?')) {
+              fetch(`/delete_idea/${idea.id}`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success) loadIdeas();
+                });
+            }
+          });
+
+          li.appendChild(textSpan);
+          li.appendChild(delBtn);
+          list.appendChild(li);
+        });
+      }
+    });
+}
+
+// Save idea after analysis
+function saveIdea(content) {
+  fetch('/save_idea', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      loadIdeas();
+    }
+  });
+}
+
+// On page load, fetch ideas
+window.addEventListener('DOMContentLoaded', loadIdeas);
+
 document.getElementById("analyze-btn").addEventListener("click", () => {
   const idea = document.getElementById("idea").value;
   const resultDiv = document.getElementById("result");
@@ -20,7 +87,6 @@ document.getElementById("analyze-btn").addEventListener("click", () => {
   fetch('/analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    //body: JSON.stringify({ idea, mode })
     body: JSON.stringify({idea,mode:selectedMode})
   })
   .then(res => res.json())
@@ -32,15 +98,14 @@ document.getElementById("analyze-btn").addEventListener("click", () => {
       return;
     }
   
-    //resultBox.innerHTML = data.result;
     loading.classList.add("hidden");
     resultDiv.classList.remove("hidden");
     resultDiv.innerHTML = data.result;
+    loadIdeas();
   })
 
   .catch(err => {
     console.error("Error:", err);
-    //resultBox.innerHTML = "Something went wrong.";
     loading.classList.add("hidden");
     resultDiv.classList.remove("hidden");
     resultDiv.innerHTML = "Something went wrong.";
