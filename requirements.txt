@@ -1,6 +1,6 @@
 flask
 flask-sqlalchemy
-openai
+openai==0.28
 python-dotenv
 gunicorn
 flask-migrate
