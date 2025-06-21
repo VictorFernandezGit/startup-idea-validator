@@ -529,24 +529,37 @@ footer {
   margin: 0 auto;
 }
 
+.optin-content h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.optin-content p {
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
 .optin-form {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
+  align-items: center; /* Center form elements */
   gap: 1rem;
 }
 
 .optin-form input[type="email"] {
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
   border-radius: 0.5rem;
   border: none;
   width: 100%;
-  max-width: 100%;
+  max-width: 400px; /* Constrain width for a better look */
   font-size: 1rem;
+  text-align: center;
+  color: #333;
 }
 
 .optin-form button {
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 11rem; /* Make button wider */
   background-color: #10b981; /* Emerald green */
   border: none;
   border-radius: 0.5rem;
@@ -832,21 +845,23 @@ footer {
 /* --- Optin section mobile styles --- */
 @media (max-width: 700px) {
   .optin-section {
-    padding: 2rem 0.5rem;
+    padding: 3rem 1rem;
   }
   .optin-content h2 {
-    font-size: 1.3rem;
+    font-size: 1.8rem;
   }
   .optin-content p {
     font-size: 1rem;
+    padding: 0 1rem;
   }
-  .optin-form input[type="email"] {
-    font-size: 0.95rem;
-    padding: 0.6rem 0.8rem;
+  .optin-form {
+    margin-top: 1.5rem;
   }
-  .optin-form button {
-    font-size: 0.95rem;
-    padding: 0.6rem 0.8rem;
+  .optin-form input[type="email"], .optin-form button {
+    font-size: 1rem;
+    width: 90%;
+    max-width: 400px;
+    padding: 0.8rem 1rem;
   }
 }
 
