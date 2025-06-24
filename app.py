@@ -136,27 +136,27 @@ def analyze():
     prompts = {
         'general': (
             f"Act as a startup analyst. Analyze: '{idea}'. "
-            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, rating (1-5 stars, integer), startup_costs (with a brief breakdown, always include this field even if you have to estimate or say 'minimal'), and tech_stack (recommended for MVP). "
             "Each key should have a concise value."
         ),
         'sharktank': (
             f"Act like a Shark Tank investor. Review: '{idea}'. "
-            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, rating (1-5 stars, integer), startup_costs (with a brief breakdown, always include this field even if you have to estimate or say 'minimal'), and tech_stack (recommended for MVP). "
             "Each key should have a concise value."
         ),
         'lean': (
             f"Act as a Lean Startup coach. Analyze: '{idea}'. "
-            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, rating (1-5 stars, integer), startup_costs (with a brief breakdown, always include this field even if you have to estimate or say 'minimal'), and tech_stack (recommended for MVP). "
             "Each key should have a concise value."
         ),
         'vc': (
             f"Act like a VC. Analyze: '{idea}'. "
-            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, rating (1-5 stars, integer), startup_costs (with a brief breakdown, always include this field even if you have to estimate or say 'minimal'), and tech_stack (recommended for MVP). "
             "Each key should have a concise value."
         ),
         'tech': (
             f"Act as a technical co-founder. Analyze: '{idea}'. "
-            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, rating (1-5 stars, integer), startup_costs (with a brief breakdown, always include this field even if you have to estimate or say 'minimal'), and tech_stack (recommended for MVP). "
             "Each key should have a concise value."
         ),
     }
@@ -205,6 +205,8 @@ def analyze():
                     else:
                         text += k.capitalize() + ': ' + v + '\n'
                 text += '\n'
+            if data.get('startup_costs'): text += 'Startup Costs:\n' + str(data['startup_costs']) + '\n\n'
+            if data.get('tech_stack'): text += 'Tech Stack:\n' + str(data['tech_stack']) + '\n\n'
             if data.get('rating'): text += 'Rating: ' + str(data['rating']) + ' / 5\n'
             return text
         plain_text = format_plain_text(result_json)

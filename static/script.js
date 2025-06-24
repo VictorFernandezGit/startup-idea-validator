@@ -106,6 +106,7 @@ document.getElementById("analyze-btn").addEventListener("click", () => {
     // Render structured result as cards with star rating
     const result = data.result;
     if (result && typeof result === 'object' && !Array.isArray(result) && Object.keys(result).length > 1) {
+      console.log('GPT result:', result);
       let html = '';
       // Star rating
       if (result.rating) {
@@ -148,8 +149,65 @@ document.getElementById("analyze-btn").addEventListener("click", () => {
             + `</div>`;
         }
       });
+      // Startup Path cards (separate for costs and tech stack)
+      function renderObjectAsList(obj) {
+        let html = '<ul style="padding-left:1.2em;">';
+        for (const [k, v] of Object.entries(obj)) {
+          if (typeof v === 'object' && v !== null) {
+            html += `<li><strong>${k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> ${renderObjectAsList(v)}</li>`;
+          } else {
+            html += `<li><strong>${k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> ${v}</li>`;
+          }
+        }
+        html += '</ul>';
+        return html;
+      }
+      if (result.startup_costs) {
+        let startupCostsHtml = '';
+        if (typeof result.startup_costs === 'object' && result.startup_costs !== null) {
+          if (result.startup_costs.breakdown) {
+            startupCostsHtml += renderObjectAsList(result.startup_costs.breakdown);
+          }
+          if (result.startup_costs.description) {
+            startupCostsHtml += `<div style='margin-top:0.5em;'>${result.startup_costs.description}</div>`;
+          }
+        } else {
+          startupCostsHtml = result.startup_costs;
+        }
+        html += `<div class=\"output-card\" style=\"flex:1 1 320px; min-width:320px; max-width:100%; position:relative;\">
+          <h3 style='margin-top:0; margin-bottom:0.5rem; color:#38bdf8;'>Startup Costs</h3>
+          <div>${startupCostsHtml || '<span style=\'color:#94a3b8;\'>No data available.</span>'}</div>
+        </div>`;
+      }
+      if (result.tech_stack) {
+        let techStackHtml = '';
+        if (typeof result.tech_stack === 'object' && result.tech_stack !== null) {
+          techStackHtml += renderObjectAsList(result.tech_stack);
+        } else {
+          techStackHtml = result.tech_stack;
+        }
+        html += `<div class=\"output-card\" style=\"flex:1 1 320px; min-width:320px; max-width:100%; position:relative;\">
+          <h3 style='margin-top:0; margin-bottom:0.5rem; color:#38bdf8;'>Tech Stack</h3>
+          <div><span id='tech-stack-text'>${techStackHtml}</span></div>
+        </div>`;
+      }
       html += '</div>';
       resultDiv.innerHTML = html;
+      // Add expand/collapse logic
+      const toggle = document.getElementById('startup-path-toggle');
+      const content = document.getElementById('startup-path-content');
+      const arrow = document.getElementById('startup-path-arrow');
+      if (toggle && content && arrow) {
+        toggle.addEventListener('click', () => {
+          if (content.style.display === 'none') {
+            content.style.display = '';
+            arrow.innerHTML = '&#9660;';
+          } else {
+            content.style.display = 'none';
+            arrow.innerHTML = '&#9654;';
+          }
+        });
+      }
     } else if (result && result.raw) {
       resultDiv.innerHTML = `<div class="output-card">${result.raw}</div>`;
     } else {
