@@ -8,6 +8,8 @@ from datetime import datetime
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_login import login_user, UserMixin, LoginManager, login_required, current_user
+import json
+import re
 
 # Load environment variables
 load_dotenv()
@@ -44,6 +46,8 @@ class Idea(db.Model):
     content = db.Column(db.Text, nullable=False)
     output = db.Column(db.Text, nullable=True)  # Stores OpenAI output
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    rating = db.Column(db.Integer, nullable=True)
+    output_text = db.Column(db.Text, nullable=True)
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -130,11 +134,31 @@ def analyze():
     idea = data.get('idea', '')
     mode = data.get('mode', 'general')
     prompts = {
-        'general': f"Act as a startup analyst. Analyze: '{idea}'. Provide summary, audience, value prop, pros/cons, competitor review, SWOT.",
-        'sharktank': f"Act like a Shark Tank investor. Review: '{idea}'. Viability, investment amount, flaws, scaling, risks, profitability.",
-        'lean': f"Act as a Lean Startup coach. Analyze: '{idea}'. MVP advice, validation, tests, assumptions, risks.",
-        'vc': f"Act like a VC. Analyze: '{idea}'. TAM/SAM/SOM, GTM, defensibility, CAC/LTV, team strength.",
-        'tech': f"Act as a technical co-founder. Analyze: '{idea}'. Build time, tech stack, risks, 3-month feasibility, architecture."
+        'general': (
+            f"Act as a startup analyst. Analyze: '{idea}'. "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Each key should have a concise value."
+        ),
+        'sharktank': (
+            f"Act like a Shark Tank investor. Review: '{idea}'. "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Each key should have a concise value."
+        ),
+        'lean': (
+            f"Act as a Lean Startup coach. Analyze: '{idea}'. "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Each key should have a concise value."
+        ),
+        'vc': (
+            f"Act like a VC. Analyze: '{idea}'. "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Each key should have a concise value."
+        ),
+        'tech': (
+            f"Act as a technical co-founder. Analyze: '{idea}'. "
+            "Return a JSON object with these keys: summary, target_audience, value_proposition, pros_cons, competitor_review, swot, and rating (1-5 stars, integer). "
+            "Each key should have a concise value."
+        ),
     }
     prompt = prompts.get(mode, prompts['general'])
     try:
@@ -144,12 +168,52 @@ def analyze():
             temperature=0.7,
             max_tokens=800
         )
-        result = response.choices[0].message.content.strip()
+        result_text = response.choices[0].message.content.strip()
+        # Remove code block markers if present (robust version)
+        result_text_clean = re.sub(r'^```(?:json)?\s*([\s\S]*?)\s*```$', r'\1', result_text.strip(), flags=re.MULTILINE)
+        try:
+            result_json = json.loads(result_text_clean)
+        except Exception:
+            # fallback: return as plain text if not valid JSON
+            result_json = {'raw': result_text}
+        # Generate plain text for export and saving
+        def format_plain_text(data):
+            if 'raw' in data:
+                return data['raw']
+            text = ''
+            if data.get('summary'): text += 'Summary:\n' + data['summary'] + '\n\n'
+            if data.get('target_audience'): text += 'Target Audience:\n' + data['target_audience'] + '\n\n'
+            if data.get('value_proposition'): text += 'Value Proposition:\n' + data['value_proposition'] + '\n\n'
+            if data.get('pros_cons'):
+                text += 'Pros & Cons:\n'
+                for k, v in data['pros_cons'].items():
+                    if isinstance(v, list):
+                        text += k.capitalize() + ':\n'
+                        for item in v:
+                            text += '- ' + item + '\n'
+                    else:
+                        text += k.capitalize() + ': ' + v + '\n'
+                text += '\n'
+            if data.get('competitor_review'): text += 'Competitor Review:\n' + data['competitor_review'] + '\n\n'
+            if data.get('swot'):
+                text += 'SWOT Analysis:\n'
+                for k, v in data['swot'].items():
+                    if isinstance(v, list):
+                        text += k.capitalize() + ':\n'
+                        for item in v:
+                            text += '- ' + item + '\n'
+                    else:
+                        text += k.capitalize() + ': ' + v + '\n'
+                text += '\n'
+            if data.get('rating'): text += 'Rating: ' + str(data['rating']) + ' / 5\n'
+            return text
+        plain_text = format_plain_text(result_json)
+        rating = result_json.get('rating') if isinstance(result_json, dict) else None
         # Save the idea and output
-        idea_obj = Idea(user_id=user.id, content=idea, output=result)
+        idea_obj = Idea(user_id=user.id, content=idea, output=result_text, rating=rating, output_text=plain_text)
         db.session.add(idea_obj)
         db.session.commit()
-        return jsonify({'result': result, 'remaining_credits': user.credits})
+        return jsonify({'result': result_json, 'remaining_credits': user.credits})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

@@ -40,8 +40,10 @@
       <button data-mode="tech" class="mode-btn">🤓 Tech Co-founder</button>
     </div>
     
-    <textarea id="idea" class="custom-textarea" placeholder="Type your startup idea here..."></textarea>
+    <textarea id="idea" class="custom-textarea gradient-border" placeholder="Type your startup idea here..." maxlength="350"></textarea>
+    <div id="char-count" style="color:#94a3b8; font-size:0.95rem; margin-top:4px;">0 / 350</div>
     <button id="analyze-btn">Analyze Idea</button>
+    <button id="export-pdf-btn" style="margin-left: 1rem; background: #8b5cf6; color: white;">Export as PDF</button>
 
     <div id="loading" class="hidden">Thinking... 💭</div>
     <div id="result" class="output-card hidden"></div>
@@ -62,6 +64,13 @@
     collapsed = !collapsed;
     sidebar.classList.toggle('sidebar-collapsed', collapsed);
     toggleBtn.innerHTML = collapsed ? '&gt;' : '&lt;';
+  });
+
+  // Character counter for textarea
+  const ideaBox = document.getElementById('idea');
+  const charCount = document.getElementById('char-count');
+  ideaBox.addEventListener('input', function() {
+    charCount.textContent = `${ideaBox.value.length} / ${ideaBox.maxLength}`;
   });
 </script>
 {% endblock %}
